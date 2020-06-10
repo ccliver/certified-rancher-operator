@@ -10,3 +10,5 @@ nodes:
   internal_address: ${private_ip}
   docker_socket: /var/run/docker.sock
   ssh_key_path: ./id_rsa
+
+kubernetes_version: ${kubernetes_version}

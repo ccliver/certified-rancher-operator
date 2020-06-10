@@ -9,3 +9,7 @@ variable "cluster_region" {
 variable "cluster_node_instance_type" {
   default = "t2.medium"
 }
+
+variable "kubernetes_version" {
+  default = "v1.16.10-rancher2-1"
+}

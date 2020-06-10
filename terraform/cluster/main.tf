@@ -96,8 +96,9 @@ data "template_file" "rke_config" {
   template = file("${path.module}/config/cluster.yml.tpl")
 
   vars = {
-    public_ip  = aws_instance.cluster_node.public_ip
-    private_ip = aws_instance.cluster_node.private_ip
+    public_ip          = aws_instance.cluster_node.public_ip
+    private_ip         = aws_instance.cluster_node.private_ip
+    kubernetes_version = var.kubernetes_version
   }
 }
 
