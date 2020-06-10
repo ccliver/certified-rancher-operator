@@ -2,14 +2,16 @@
       
 Infrastructure code and tooling to setup and work through labs from the Certified Rancher Operator course.
 
+
 ## Lab 1 Download and Install RKE
 `brew install rke`
 
-## Lab 2 Creae an RKE Configuration File
+
+## Lab 2 Create an RKE Configuration File
 See https://rancher.com/docs/rke/latest/en/config-options/nodes/
 
-## Lab 3 - Deploy an RKE Cluster
 
+## Lab 3 - Deploy an RKE Cluster
 The "cluster" was deployed on a single Ubuntu 18 node using Terraform. Make can be used with a Docker/Terraform command runner to build the infrastructure
 
 ### Usage
