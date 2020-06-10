@@ -1,0 +1,14 @@
+# Byte-compiled / optimized / DLL files
+# Vim backups*
+*.swp
+
+# Terraform files
+.terraform
+*.tfstate*
+
+# Rancher files
+cluster.yml
+kube_config_cluster.yml
+cluster.rkestate
+
+id_rsa
