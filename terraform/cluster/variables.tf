@@ -11,5 +11,5 @@ variable "cluster_node_instance_type" {
 }
 
 variable "kubernetes_version" {
-  default = "v1.16.10-rancher2-1"
+  default = "v1.17.6-rancher2-1"
 }

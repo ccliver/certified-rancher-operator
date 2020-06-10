@@ -54,6 +54,63 @@ resource "aws_security_group" "cluster" {
   }
 }
 
+resource "aws_iam_instance_profile" "cluster" {
+  name = "${var.cluster_name}-${var.cluster_region}"
+  role = aws_iam_role.cluster.name
+}
+
+resource "aws_iam_role" "cluster" {
+  name = "${var.cluster_name}-${var.cluster_region}"
+  path = "/"
+
+  assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": "sts:AssumeRole",
+            "Principal": {
+               "Service": "ec2.amazonaws.com"
+            },
+            "Effect": "Allow",
+            "Sid": ""
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_policy" "cluster" {
+  name        = "${var.cluster_name}-${var.cluster_region}"
+  path        = "/"
+  description = "My test policy"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "001",
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "${aws_s3_bucket.backups.arn}"
+    },
+    {
+      "Sid": "002",
+      "Effect": "Allow",
+      "Action": "s3:*Object",
+      "Resource": "${aws_s3_bucket.backups.arn}/*"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "cluster" {
+  role       = aws_iam_role.cluster.name
+  policy_arn = aws_iam_policy.cluster.arn
+}
+
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -112,4 +169,16 @@ resource "local_file" "ssh_key" {
   content         = tls_private_key.ssh_key.private_key_pem
   filename        = "${path.module}/../../id_rsa"
   file_permission = "0400"
+}
+
+resource "aws_s3_bucket" "backups" {
+  bucket = "${var.cluster_name}-${var.cluster_region}-backups"
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "aws:kms"
+      }
+    }
+  }
 }

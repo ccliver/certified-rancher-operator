@@ -2,9 +2,11 @@
       
 Infrastructure code and tooling to setup and work through labs from the Certified Rancher Operator course.
 
+These labs used [RKE](https://rancher.com/docs/rke/latest/en/installation/) and expect that you have an AWS access and secret key in your environment.
 
 ## Lab 1 Download and Install RKE
 `brew install rke`
+`brew switch rke 1.1.2`
 
 
 ## Lab 2 Create an RKE Configuration File
@@ -14,7 +16,6 @@ See https://rancher.com/docs/rke/latest/en/config-options/nodes/
 ## Lab 3 - Deploy an RKE Cluster
 The "cluster" was deployed on a single Ubuntu 18 node using Terraform. Make can be used with a Docker/Terraform command runner to build the infrastructure
 
-### Usage
 ```bash
 # Create the lab cluster:
 make init apply
@@ -27,3 +28,22 @@ ssh -i id_rsa ubuntu@$clusterIp # The cluster ip is in Terraform outputs: `make 
 # To clean up:
 make destroy
 ```
+
+
+## Lab 4 - Upgrade an RKE Cluster
+The cluster deployed in Lab 2/3 is on a previous version so that it can be upgraded in this lab. Added S3 bucket for backups.
+
+```bash
+# Create the lab cluster:
+make init apply
+rke up
+
+# Create a backup:
+rke etcd snapshot-save --config cluster.yml --name lab-4-backup$(date +%F) --s3 --bucket-name rancher-operator-labs-us-west-2-backups --access-key $AWS_ACCESS_KEY_ID --secret-key $AWS_SECRET_ACCESS_KEY
+
+# Update version in variables.tf and update cluster config:
+make apply
+
+# Upgrade the cluster:
+rke up
+rke version
