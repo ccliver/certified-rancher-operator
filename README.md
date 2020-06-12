@@ -5,8 +5,10 @@ Infrastructure code and tooling to setup and work through labs from the Certifie
 These labs used [RKE](https://rancher.com/docs/rke/latest/en/installation/) and expect that you have an AWS access and secret key in your environment.
 
 ## Lab 1 Download and Install RKE
-`brew install rke`
-`brew switch rke 1.1.2`
+```bash
+brew install rke
+brew switch rke 1.1.2
+```
 
 
 ## [Lab 2](https://github.com/ccliver/certified-rancher-operator/tree/lab-2-and-3) Create an RKE Configuration File
