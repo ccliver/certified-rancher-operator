@@ -47,3 +47,4 @@ make apply
 # Upgrade the cluster:
 rke up
 rke version
+```
