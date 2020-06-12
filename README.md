@@ -64,3 +64,15 @@ node1     Ready     controlplane,etcd,worker   1m        v1.17.6
 node2     Ready     controlplane,etcd,worker   1m        v1.17.6
 node3     Ready     controlplane,etcd,worker   1m        v1.17.6
 ```
+
+## [Lab 6](https://github.com/ccliver/certified-rancher-operator/tree/lab-6) - Install Rancher with Docker
+This lab just shows how to run the Rancher docker container for a sandbox/testing environment. This should not be used for production workloads.
+
+```bash
+make init apply
+
+# SSH into one of the node instances:
+sudo docker run -d --restart=unless-stopped -p 80:80 -p 443:443 -v /opt/rancher:/var/lib/rancher rancher/rancher:v2.4.1
+
+# Allow port 443 from your IP and browse to the instance to access the Rancher web console.
+```
