@@ -81,9 +81,8 @@ EOF
 }
 
 resource "aws_iam_policy" "cluster" {
-  name        = "${var.cluster_name}-${var.cluster_region}"
-  path        = "/"
-  description = "My test policy"
+  name = "${var.cluster_name}-${var.cluster_region}"
+  path = "/"
 
   policy = <<EOF
 {
@@ -92,14 +91,11 @@ resource "aws_iam_policy" "cluster" {
     {
       "Sid": "001",
       "Effect": "Allow",
-      "Action": "s3:ListBucket",
-      "Resource": "${aws_s3_bucket.backups.arn}"
-    },
-    {
-      "Sid": "002",
-      "Effect": "Allow",
-      "Action": "s3:*Object",
-      "Resource": "${aws_s3_bucket.backups.arn}/*"
+      "Action": "s3:*",
+      "Resource": [
+        "${aws_s3_bucket.backups.arn}",
+        "${aws_s3_bucket.backups.arn}/*"
+      ]
     }
   ]
 }
@@ -138,6 +134,7 @@ resource "aws_instance" "cluster_node" {
   vpc_security_group_ids = [aws_security_group.cluster.id]
   subnet_id              = module.vpc.public_subnets[0]
   key_name               = aws_key_pair.cluster.key_name
+  iam_instance_profile   = aws_iam_instance_profile.cluster.name
   user_data              = <<SCRIPT
 #!/bin/bash -ex
 curl https://releases.rancher.com/install-docker/18.09.sh | sh
@@ -156,6 +153,10 @@ data "template_file" "rke_config" {
     public_ip          = aws_instance.cluster_node.public_ip
     private_ip         = aws_instance.cluster_node.private_ip
     kubernetes_version = var.kubernetes_version
+    backup_bucket      = aws_s3_bucket.backups.id
+    backup_folder      = var.cluster_name
+    backup_interval    = var.backup_interval
+    cluster_region     = var.cluster_region
   }
 }
 

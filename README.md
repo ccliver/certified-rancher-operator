@@ -9,11 +9,11 @@ These labs used [RKE](https://rancher.com/docs/rke/latest/en/installation/) and 
 `brew switch rke 1.1.2`
 
 
-## Lab 2 Create an RKE Configuration File
+## [Lab 2](https://github.com/ccliver/certified-rancher-operator/tree/lab-2-and-3) Create an RKE Configuration File
 See https://rancher.com/docs/rke/latest/en/config-options/nodes/
 
 
-## Lab 3 - Deploy an RKE Cluster
+## [Lab 3](https://github.com/ccliver/certified-rancher-operator/tree/lab-2-and-3) - Deploy an RKE Cluster
 The "cluster" was deployed on a single Ubuntu 18 node using Terraform. Make can be used with a Docker/Terraform command runner to build the infrastructure
 
 ```bash
@@ -30,8 +30,8 @@ make destroy
 ```
 
 
-## Lab 4 - Upgrade an RKE Cluster
-The cluster deployed in Lab 2/3 is on a previous version so that it can be upgraded in this lab. Added S3 bucket for backups.
+## [Lab 4](https://github.com/ccliver/certified-rancher-operator/tree/lab-4) - Upgrade an RKE Cluster
+The cluster deployed in Lab 2/3 is on a previous version so that it can be upgraded in this lab. Added S3 bucket for backups and configured rke to backup etcd on a schedule.
 
 ```bash
 # Create the lab cluster:
@@ -39,7 +39,7 @@ make init apply
 rke up
 
 # Create a backup:
-rke etcd snapshot-save --config cluster.yml --name lab-4-backup$(date +%F) --s3 --bucket-name rancher-operator-labs-us-west-2-backups --access-key $AWS_ACCESS_KEY_ID --secret-key $AWS_SECRET_ACCESS_KEY
+rke etcd snapshot-save --config cluster.yml --name lab-4-backup$(date +%F) --s3 --bucket-name rancher-operator-labs-us-west-2-backups
 
 # Update version in variables.tf and update cluster config:
 make apply

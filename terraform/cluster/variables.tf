@@ -13,3 +13,7 @@ variable "cluster_node_instance_type" {
 variable "kubernetes_version" {
   default = "v1.17.6-rancher2-1"
 }
+
+variable "backup_interval" {
+  default = 6
+}

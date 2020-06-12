@@ -12,3 +12,12 @@ nodes:
   ssh_key_path: ./id_rsa
 
 kubernetes_version: ${kubernetes_version}
+
+services:
+  etcd:
+    backup_config:
+        interval_hours: ${backup_interval}
+        s3backupconfig:
+          bucket_name: ${backup_bucket}
+          folder: ${backup_folder}
+          endpoint: s3.${cluster_region}.amazonaws.com
