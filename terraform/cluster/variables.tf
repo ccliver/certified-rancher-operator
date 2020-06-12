@@ -17,3 +17,7 @@ variable "kubernetes_version" {
 variable "backup_interval" {
   default = 6
 }
+
+variable "cluster_node_count" {
+  default = 3
+}

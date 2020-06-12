@@ -42,7 +42,7 @@ resource "aws_security_group" "cluster" {
   ingress {
     from_port = 0
     to_port   = 0
-    protocol  = "tcp"
+    protocol  = -1
     self      = true
   }
 
@@ -129,6 +129,7 @@ resource "aws_key_pair" "cluster" {
 }
 
 resource "aws_instance" "cluster_node" {
+  count                  = var.cluster_node_count
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = var.cluster_node_instance_type
   vpc_security_group_ids = [aws_security_group.cluster.id]
@@ -142,26 +143,36 @@ sudo usermod -aG docker ubuntu
 SCRIPT
 
   tags = {
-    Name = "cluster"
+    Name = "${var.cluster_name}-node${count.index + 1}-${var.cluster_region}"
   }
 }
 
+/*
 data "template_file" "rke_config" {
   template = file("${path.module}/config/cluster.yml.tpl")
 
   vars = {
-    public_ip          = aws_instance.cluster_node.public_ip
-    private_ip         = aws_instance.cluster_node.private_ip
     kubernetes_version = var.kubernetes_version
     backup_bucket      = aws_s3_bucket.backups.id
     backup_folder      = var.cluster_name
     backup_interval    = var.backup_interval
     cluster_region     = var.cluster_region
+    private_ips        = aws_instance.cluster_node.*.private_ip
   }
 }
+*/
 
 resource "local_file" "rke_config" {
-  content         = data.template_file.rke_config.rendered
+  #content         = data.template_file.rke_config.rendered
+  content         = templatefile("${path.module}/config/cluster.yml.tpl", {
+    kubernetes_version = var.kubernetes_version,
+    backup_bucket      = aws_s3_bucket.backups.id,
+    backup_folder      = var.cluster_name,
+    backup_interval    = var.backup_interval,
+    cluster_region     = var.cluster_region,
+    public_ips         = aws_instance.cluster_node.*.public_ip
+    private_ips        = aws_instance.cluster_node.*.private_ip
+  })
   filename        = "${path.module}/../../cluster.yml"
   file_permission = "0644"
 }

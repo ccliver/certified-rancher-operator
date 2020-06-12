@@ -48,3 +48,17 @@ make apply
 rke up
 rke version
 ```
+
+## [Lab 5](https://github.com/ccliver/certified-rancher-operator/tree/lab-5) - Add Nodes to an RKE Cluster
+Updated Terraform to build multiple nodes and add them to the rke config.
+
+```bash
+# Create the lab cluster:
+make init apply
+rke up
+kubectl --kubeconfig ./kube_config_cluster.yml get nodes
+NAME      STATUS    ROLES                      AGE       VERSION
+node1     Ready     controlplane,etcd,worker   1m        v1.17.6
+node2     Ready     controlplane,etcd,worker   1m        v1.17.6
+node3     Ready     controlplane,etcd,worker   1m        v1.17.6
+```
