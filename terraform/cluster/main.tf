@@ -154,24 +154,8 @@ SCRIPT
   }
 }
 
-/*
-data "template_file" "rke_config" {
-  template = file("${path.module}/config/cluster.yml.tpl")
-
-  vars = {
-    kubernetes_version = var.kubernetes_version
-    backup_bucket      = aws_s3_bucket.backups.id
-    backup_folder      = var.cluster_name
-    backup_interval    = var.backup_interval
-    cluster_region     = var.cluster_region
-    private_ips        = aws_instance.cluster_node.*.private_ip
-  }
-}
-*/
-
 resource "local_file" "rke_config" {
-  #content         = data.template_file.rke_config.rendered
-  content = templatefile("${path.module}/config/cluster.yml.tpl", {
+    content            = templatefile("${path.module}/config/cluster.yml.tpl", {
     kubernetes_version = var.kubernetes_version,
     backup_bucket      = aws_s3_bucket.backups.id,
     backup_folder      = var.cluster_name,
@@ -191,7 +175,8 @@ resource "local_file" "ssh_key" {
 }
 
 resource "aws_s3_bucket" "backups" {
-  bucket = "${var.cluster_name}-${var.cluster_region}-backups"
+  bucket        = "${var.cluster_name}-${var.cluster_region}-backups"
+  force_destroy = true
 
   server_side_encryption_configuration {
     rule {

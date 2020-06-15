@@ -113,3 +113,30 @@ rancher   3         3         3            3           15m
 
 # Browse to https://rancherlab.ddns.net/
 ```
+
+## [Lab 10](https://github.com/ccliver/certified-rancher-operator/tree/lab-10) - Backup and Restore an RKE Cluster
+
+```bash
+# Create a new cluster if you don't already have one up:
+make init apply
+rke up
+
+# Install Rancher if needed (see notes for Lab 9).
+
+# Take an etcd backup:
+rke etcd snapshot-save # saves to s3
+
+# Terminate the EC2 instances then rebuild them with Terraform:
+aws ec2 terminate-instances --region us-west-2 --instance-ids i-0a417d8438afbd300 i-02cd252202bbac05a i-095640dd4ed6f9ef2
+rm cluster.yml
+make apply
+# Comment out nodes 2 and 3
+rke up
+
+# Restore snapshot
+rke etcd snapshot-restore --name rke_etcd_snapshot_2020-06-15T17:41:50-04:00 --config cluster.yml
+rke up
+
+# Uncomment nodes 2 and 3
+rke up
+```
