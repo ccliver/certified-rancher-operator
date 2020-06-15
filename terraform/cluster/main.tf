@@ -11,9 +11,9 @@ module "vpc" {
   version            = "2.38.0"
   name               = "${var.cluster_name}-${var.cluster_region}"
   cidr               = "10.0.0.0/16"
-  azs                = [data.aws_availability_zones.available.names[0]]
-  private_subnets    = ["10.0.1.0/24"]
-  public_subnets     = ["10.0.101.0/24"]
+  azs                = [data.aws_availability_zones.available.names[0], data.aws_availability_zones.available.names[1], data.aws_availability_zones.available.names[2]]
+  private_subnets    = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+  public_subnets     = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
   enable_nat_gateway = true
 
   vpc_tags = {
@@ -37,6 +37,13 @@ resource "aws_security_group" "cluster" {
     to_port     = 6443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/8"]
   }
 
   ingress {
@@ -164,7 +171,7 @@ data "template_file" "rke_config" {
 
 resource "local_file" "rke_config" {
   #content         = data.template_file.rke_config.rendered
-  content         = templatefile("${path.module}/config/cluster.yml.tpl", {
+  content = templatefile("${path.module}/config/cluster.yml.tpl", {
     kubernetes_version = var.kubernetes_version,
     backup_bucket      = aws_s3_bucket.backups.id,
     backup_folder      = var.cluster_name,
@@ -192,5 +199,36 @@ resource "aws_s3_bucket" "backups" {
         sse_algorithm = "aws:kms"
       }
     }
+  }
+}
+
+resource "aws_lb" "cluster" {
+  name               = "${var.cluster_name}-${var.cluster_region}"
+  load_balancer_type = "network"
+  subnets            = module.vpc.public_subnets
+}
+
+resource "aws_lb_target_group" "cluster" {
+  name     = "${var.cluster_name}-${var.cluster_region}"
+  port     = 443
+  protocol = "TCP"
+  vpc_id   = module.vpc.vpc_id
+}
+
+resource "aws_lb_target_group_attachment" "cluster" {
+  count            = var.cluster_node_count
+  target_group_arn = aws_lb_target_group.cluster.arn
+  target_id        = aws_instance.cluster_node[count.index].id
+  port             = 443
+}
+
+resource "aws_lb_listener" "cluster_443" {
+  load_balancer_arn = aws_lb.cluster.arn
+  port              = "443"
+  protocol          = "TCP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.cluster.arn
   }
 }

@@ -2,9 +2,9 @@ nodes:
 %{ for index, ip in public_ips }
 - address: ${ip}
   role:
-  - controlplane
-  - worker
-  - etcd
+    - controlplane
+    - worker
+    - etcd
   user: ubuntu
   hostname_override: node${index + 1}
   internal_address: ${private_ips[index]}

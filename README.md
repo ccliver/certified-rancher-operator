@@ -19,6 +19,8 @@ See https://rancher.com/docs/rke/latest/en/config-options/nodes/
 The "cluster" was deployed on a single Ubuntu 18 node using Terraform. Make can be used with a Docker/Terraform command runner to build the infrastructure
 
 ```bash
+brew install kubectl
+
 # Create the lab cluster:
 make init apply
 rke up
@@ -75,4 +77,39 @@ make init apply
 sudo docker run -d --restart=unless-stopped -p 80:80 -p 443:443 -v /opt/rancher:/var/lib/rancher rancher/rancher:v2.4.1
 
 # Allow port 443 from your IP and browse to the instance to access the Rancher web console.
+```
+
+## [Lab 9](https://github.com/ccliver/certified-rancher-operator/tree/lab-9) - Deploy Rancher Into RKE
+Deploy an HA RKE cluster to host Rancher using their [architecture guidelines](https://rancher.com/docs/rancher/v2.x/en/overview/architecture-recommendations/).
+
+[Rancher Install Guide](https://rancher.com/docs/rancher/v2.x/en/installation/k8s-install/helm-rancher/)
+
+```bash
+brew install helm
+
+# Create the lab cluster:
+make init apply
+rke up
+
+# Install Cert Manager. This lab will use Rancher's self-signed certificates.
+export KUBECONFIG=$(pwd)/kube_config_cluster.yml
+helm repo add rancher-stable https://releases.rancher.com/server-charts/latest
+kubectl create namespace cattle-system
+kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.15.0/cert-manager.crds.yaml
+kubectl create namespace cert-manager
+helm install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --version v0.15.0
+
+# Install Rancher:
+# NOTE: rancherlab.ddns.net is a CNAME to the NLB address in my no-ip.com account.
+helm install rancher rancher-stable/rancher  --namespace cattle-system  --set hostname=rancherlab.ddns.net
+
+# Verify the deploy was successful:
+kubectl -n cattle-system get deploy rancher
+NAME      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+rancher   3         3         3            3           15m
+
+# Browse to https://rancherlab.ddns.net/
 ```
