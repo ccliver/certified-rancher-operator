@@ -186,3 +186,15 @@ make build_new_cluster # Update the rancherlab.ddns.net CNAME in no-ip.com with 
 
 # Log into https://rancherlab.ddns.net and click Add Cluster, select the Node Template from lab 13 with 3 nodes etcd/control plane/worker on each, select the RKE template from lab 12, and a previous version of Kubernetes to be upgraded in a future lab. The cluster should go from Provisioning to Active when ready.
 ```
+
+## [Lab 15](https://github.com/ccliver/certified-rancher-operator/tree/lab-15) - Troubleshooting Rancher API Server Logs
+
+```bash
+# Build a new lab Rancher cluster if needed
+make build_new_cluster # Update the rancherlab.ddns.net CNAME in no-ip.com with the output NLB address
+
+# Check that all pods are up and not in continuous restart then check logs
+export KUBECONFIG=$(pwd)/kube_config_cluster.yml
+kubectl get pods -n cattle-system -l app=rancher -o wide
+kubectl logs -n cattle-system -l app=rancher
+```
