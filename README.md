@@ -2,7 +2,7 @@
       
 Infrastructure code and tooling to setup and work through labs from the Certified Rancher Operator course.
 
-These labs used [RKE](https://rancher.com/docs/rke/latest/en/installation/) and expect that you have an AWS access and secret key in your environment.
+These labs used [RKE](https://rancher.com/docs/rke/latest/en/installation/) and expect that you have an AWS access and secret key in your environment. All labs were done using [Linux Academy](https://linuxacademy.com/) Cloud Sandboxes that only stay active for four hours, so automation was added to make rebuilding the lab environments easier.
 
 ## Lab 1 Download and Install RKE
 ```bash
@@ -158,4 +158,13 @@ helm repo update
 helm list --all-namespaces -f rancher -o yaml # To get the namespace
 helm get values -n cattle-system rancher -o yaml > values.yaml
 helm upgrade rancher rancher-stable/rancher --version 2.4.4 --namespace cattle-system --values values.yaml
+```
+
+## [Lab 12](https://github.com/ccliver/certified-rancher-operator/tree/lab-12) - Create an RKE Template
+
+```bash
+# Build a new lab Rancher cluster if needed
+make build_new_cluster # Update the rancherlab.ddns.net CNAME in no-ip.com with the output NLB address
+
+# Browse to https://rancherlab.ddns.net and create an RKE template (Tools -> RKE Templates) select mostly default settings along with AWS as the provider and a previous version of Kubernetes that's overrideable for a future lab. Click View as YAML to save the template locally if the lab environment will be deleted soon.
 ```
