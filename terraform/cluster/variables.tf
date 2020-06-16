@@ -21,3 +21,5 @@ variable "backup_interval" {
 variable "cluster_node_count" {
   default = 3
 }
+
+variable "my_ip" {} # Set in the Makefile

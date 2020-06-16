@@ -1,11 +1,13 @@
 .DEFAULT_GOAL := help
 
+MY_IP := $(shell curl -s https://ifconfig.me)
 TERRAFORM_VERSION := 0.12.24
 DOCKER_OPTIONS := -v ${PWD}:/workdir \
 -w /workdir/terraform/cluster \
 -it \
 -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
--e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+-e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+-e TF_VAR_my_ip=${MY_IP}
 
 init: ## Initialize the Terraform state
 	docker run ${DOCKER_OPTIONS} hashicorp/terraform:${TERRAFORM_VERSION} init -upgrade=true
