@@ -259,3 +259,10 @@ sudo docker logs kube-apiserver
 sudo docker logs kube-controller-manager
 sudo docker logs kube-scheduler
 ```
+
+## [Lab 19](https://github.com/ccliver/certified-rancher-operator/tree/lab-19) - Troubleshooting Control Plane Issues
+
+```bash
+# Build a new lab Rancher cluster if needed (see Lab 12)
+```
+Follow guide [here](https://academy.rancher.com/assets/courseware/v1/5503818b9b8e5c3edc4290c2ceaf0fa5/asset-v1:RANCHER+K101+2019+type@asset+block/Lab-19-Troubleshooting-the-Network-Overlay.pdf) to do a network overlay test.
