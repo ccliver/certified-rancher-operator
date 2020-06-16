@@ -140,3 +140,22 @@ rke up
 # Uncomment nodes 2 and 3
 rke up
 ```
+
+## [Lab 11](https://github.com/ccliver/certified-rancher-operator/tree/lab-11) - Upgrade Rancher (RKE)
+
+```bash
+# Create a new cluster if you don't already have one up:
+make init apply
+rke up
+
+# Install and older version of Rancher if needed (see notes for Lab 9 but add `--version v2.3.4` or whatever is appropriate).
+
+# Backup cluster
+rke etcd snapshot-save --name rke-pre-upgrade-$(date +%F)
+
+# Install new version
+helm repo update
+helm list --all-namespaces -f rancher -o yaml # To get the namespace
+helm get values -n cattle-system rancher -o yaml > values.yaml
+helm upgrade rancher rancher-stable/rancher --version 2.4.4 --namespace cattle-system --values values.yaml
+```
