@@ -27,6 +27,18 @@ output: ## Display outputs from the Terraform state
 adhoc: ## Run an ad hoc Terraform command: COMMAND=version make adhoc
 	docker run ${DOCKER_OPTIONS} hashicorp/terraform:${TERRAFORM_VERSION} ${COMMAND}
 
+build_new_cluster: ## Standup new RKE cluster and install Rancher into it
+	docker run ${DOCKER_OPTIONS} hashicorp/terraform:${TERRAFORM_VERSION} init -upgrade=true
+	docker run ${DOCKER_OPTIONS} hashicorp/terraform:${TERRAFORM_VERSION} apply -auto-approve
+	rke up
+	export KUBECONFIG=$(pwd)/kube_config_cluster.yml
+	helm repo add rancher-stable https://releases.rancher.com/server-charts/latest
+	kubectl create namespace cattle-system
+	kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.15.0/cert-manager.crds.yaml
+	kubectl create namespace cert-manager
+	helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v0.15.0
+	helm install rancher rancher-stable/rancher  --namespace cattle-system  --set hostname=rancherlab.ddns.net
+
 cleanup_lab_files: ## Delete cluster config, ssh key, kube config, terraform state.
 	rm  -rf terraform/cluster/.terraform/ cluster.rkestate id_rsa kube_config_cluster.yml cluster.yml terraform/cluster/terraform.tfstate*
 

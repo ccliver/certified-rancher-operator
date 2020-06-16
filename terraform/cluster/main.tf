@@ -40,6 +40,13 @@ resource "aws_security_group" "cluster" {
   }
 
   ingress {
+    from_port   = 6443
+    to_port     = 6443
+    protocol    = "tcp"
+    cidr_blocks = ["${var.my_ip}/32"]
+  }
+
+  ingress {
     from_port = 0
     to_port   = 0
     protocol  = -1
@@ -167,8 +174,16 @@ resource "local_file" "ssh_key" {
   file_permission = "0400"
 }
 
+resource "random_string" "string" {
+  length  = 6
+  lower   = true
+  number  = false
+  upper   = false
+  special = false
+}
+
 resource "aws_s3_bucket" "backups" {
-  bucket        = "${var.cluster_name}-${var.cluster_region}-backups"
+  bucket        = "${var.cluster_name}-${var.cluster_region}-backups-${random_string.string.result}"
   force_destroy = true
 
   server_side_encryption_configuration {
@@ -184,6 +199,8 @@ resource "aws_lb" "cluster" {
   name               = "${var.cluster_name}-${var.cluster_region}"
   load_balancer_type = "network"
   subnets            = module.vpc.public_subnets
+
+  depends_on = [module.vpc]
 }
 
 resource "aws_lb_target_group" "cluster" {
