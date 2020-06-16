@@ -172,29 +172,32 @@ make build_new_cluster # Update the rancherlab.ddns.net CNAME in no-ip.com with 
 ## [Lab 13](https://github.com/ccliver/certified-rancher-operator/tree/lab-13) - Create a Node Template
 
 ```bash
-# Build a new lab Rancher cluster if needed
-make build_new_cluster # Update the rancherlab.ddns.net CNAME in no-ip.com with the output NLB address
-
+# Build a new lab Rancher cluster if needed (see Lab 12)
 # Browse to https://rancherlab.ddns.net and create a Node template (avatar in top right corner -> Node Templates) click Add Template, choose EC2, us-west-2, add the Linux Academy key pair and click Create.
 ```
 
 ## [Lab 14](https://github.com/ccliver/certified-rancher-operator/tree/lab-14) - Deploy an RKE Cluster
 
 ```bash
-# Build a new lab Rancher cluster if needed
-make build_new_cluster # Update the rancherlab.ddns.net CNAME in no-ip.com with the output NLB address
-
+# Build a new lab Rancher cluster if needed (see Lab 12)
 # Log into https://rancherlab.ddns.net and click Add Cluster, select the Node Template from lab 13 with 3 nodes etcd/control plane/worker on each, select the RKE template from lab 12, and a previous version of Kubernetes to be upgraded in a future lab. The cluster should go from Provisioning to Active when ready.
 ```
 
 ## [Lab 15](https://github.com/ccliver/certified-rancher-operator/tree/lab-15) - Troubleshooting Rancher API Server Logs
 
 ```bash
-# Build a new lab Rancher cluster if needed
-make build_new_cluster # Update the rancherlab.ddns.net CNAME in no-ip.com with the output NLB address
-
+# Build a new lab Rancher cluster if needed (see Lab 12)
 # Check that all pods are up and not in continuous restart then check logs
 export KUBECONFIG=$(pwd)/kube_config_cluster.yml
 kubectl get pods -n cattle-system -l app=rancher -o wide
 kubectl logs -n cattle-system -l app=rancher
+```
+
+## [Lab 16](https://github.com/ccliver/certified-rancher-operator/tree/lab-16) - TroubleshootingWorker Nodes
+
+```bash
+# Build a new lab Rancher cluster if needed (see Lab 12)
+# This lab was just showing how to get on a worker node and check the container runtime (Docker) logs
+ssh -i id_rsa ubuntu@34.212.27.107 "docker logs kubelet"
+ssh -i id_rsa ubuntu@34.212.27.107 "docker logs kube-proxy"
 ```
