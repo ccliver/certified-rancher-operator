@@ -155,7 +155,7 @@ SCRIPT
 }
 
 resource "local_file" "rke_config" {
-    content            = templatefile("${path.module}/config/cluster.yml.tpl", {
+  content = templatefile("${path.module}/config/cluster.yml.tpl", {
     kubernetes_version = var.kubernetes_version,
     backup_bucket      = aws_s3_bucket.backups.id,
     backup_folder      = var.cluster_name,
