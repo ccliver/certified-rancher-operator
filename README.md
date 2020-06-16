@@ -193,7 +193,7 @@ kubectl get pods -n cattle-system -l app=rancher -o wide
 kubectl logs -n cattle-system -l app=rancher
 ```
 
-## [Lab 16](https://github.com/ccliver/certified-rancher-operator/tree/lab-16) - TroubleshootingWorker Nodes
+## [Lab 16](https://github.com/ccliver/certified-rancher-operator/tree/lab-16) - Troubleshooting Worker Nodes
 
 ```bash
 # Build a new lab Rancher cluster if needed (see Lab 12)
@@ -201,3 +201,39 @@ kubectl logs -n cattle-system -l app=rancher
 ssh -i id_rsa ubuntu@34.212.27.107 "docker logs kubelet"
 ssh -i id_rsa ubuntu@34.212.27.107 "docker logs kube-proxy"
 ```
+
+## [Lab 17](https://github.com/ccliver/certified-rancher-operator/tree/lab-17) - Troubleshooting Etcd Nodes
+[Rancher etcd troubleshooting docs](https://rancher.com/docs/rancher/v2.x/en/troubleshooting/kubernetes-components/etcd/#check-endpoint-status)
+
+```bash
+# Build a new lab Rancher cluster if needed (see Lab 12)
+# Log into an etcd node and ensure it's running
+ssh -i id_rsa ubuntu@34.212.27.107
+ubuntu@ip-10-0-101-168:~$ docker ps -a -f=name=etcd$
+CONTAINER ID        IMAGE                                 COMMAND                  CREATED             STATUS              PORTS               NAMES
+efebfc21a713        rancher/coreos-etcd:v3.4.3-rancher1   "/usr/local/bin/etcd…"   2 hours ago         Up 2 hours                              etcd 
+
+# Check logs
+docker logs etcd
+
+# Check etcd members on all nodes (should be identical on each)
+ubuntu@ip-10-0-101-168:~$ docker exec etcd etcdctl member list
+2a9782adc0f341f, started, etcd-node2, https://10.0.101.168:2380, https://10.0.101.168:2379,https://10.0.101.168:4001, false
+26333bf06aee8883, started, etcd-node3, https://10.0.101.214:2380, https://10.0.101.214:2379,https://10.0.101.214:4001, false
+937ea053d06842c1, started, etcd-node1, https://10.0.101.20:2380, https://10.0.101.20:2379,https://10.0.101.20:4001, false
+
+# Check endpoint status
+ubuntu@ip-10-0-101-168:~$ docker exec -e ETCDCTL_ENDPOINTS=$(docker exec etcd /bin/sh -c "etcdctl member list | cut -d, -f5 | sed -e 's/ //g' | paste -sd ','") etcd etcdctl endpoint status --write-out table
++---------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
+|         ENDPOINT          |        ID        | VERSION | DB SIZE | IS LEADER | IS LEARNER | RAFT TERM | RAFT INDEX | RAFT APPLIED INDEX | ERRORS |
++---------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
+| https://10.0.101.168:2379 |  2a9782adc0f341f |   3.4.3 |   10 MB |     false |      false |         3 |      38642 |              38642 |        |
+| https://10.0.101.214:2379 | 26333bf06aee8883 |   3.4.3 |   10 MB |     false |      false |         3 |      38642 |              38642 |        |
+|  https://10.0.101.20:2379 | 937ea053d06842c1 |   3.4.3 |   10 MB |      true |      false |         3 |      38642 |              38642 |        |
++---------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
+
+# Check endpoint health
+ubuntu@ip-10-0-101-168:~$ docker exec -e ETCDCTL_ENDPOINTS=$(docker exec etcd /bin/sh -c "etcdctl member list | cut -d, -f5 | sed -e 's/ //g' | paste -sd ','") etcd etcdctl endpoint health
+https://10.0.101.168:2379 is healthy: successfully committed proposal: took = 15.29209ms
+https://10.0.101.20:2379 is healthy: successfully committed proposal: took = 14.723183ms
+https://10.0.101.214:2379 is healthy: successfully committed proposal: took = 20.665624ms
