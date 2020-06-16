@@ -37,6 +37,7 @@ build_new_cluster: ## Standup new RKE cluster and install Rancher into it
 	kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.15.0/cert-manager.crds.yaml
 	kubectl create namespace cert-manager
 	helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v0.15.0
+	sleep 10
 	helm install rancher rancher-stable/rancher  --namespace cattle-system  --set hostname=rancherlab.ddns.net
 
 cleanup_lab_files: ## Delete cluster config, ssh key, kube config, terraform state.
