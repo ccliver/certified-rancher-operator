@@ -168,3 +168,12 @@ make build_new_cluster # Update the rancherlab.ddns.net CNAME in no-ip.com with 
 
 # Browse to https://rancherlab.ddns.net and create an RKE template (Tools -> RKE Templates) select mostly default settings along with AWS as the provider and a previous version of Kubernetes that's overrideable for a future lab. Click View as YAML to save the template locally if the lab environment will be deleted soon.
 ```
+
+## [Lab 13](https://github.com/ccliver/certified-rancher-operator/tree/lab-13) - Create a Node Template
+
+```bash
+# Build a new lab Rancher cluster if needed
+make build_new_cluster # Update the rancherlab.ddns.net CNAME in no-ip.com with the output NLB address
+
+# Browse to https://rancherlab.ddns.net and create a Node template (avatar in top right corner -> Node Templates) click Add Template, choose EC2, us-west-2, add the Linux Academy key pair and click Create.
+```
