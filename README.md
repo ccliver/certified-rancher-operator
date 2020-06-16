@@ -237,3 +237,25 @@ ubuntu@ip-10-0-101-168:~$ docker exec -e ETCDCTL_ENDPOINTS=$(docker exec etcd /b
 https://10.0.101.168:2379 is healthy: successfully committed proposal: took = 15.29209ms
 https://10.0.101.20:2379 is healthy: successfully committed proposal: took = 14.723183ms
 https://10.0.101.214:2379 is healthy: successfully committed proposal: took = 20.665624ms
+```
+
+## [Lab 18](https://github.com/ccliver/certified-rancher-operator/tree/lab-18) - Troubleshooting Control Plane Issues
+[Rancher control plane troubleshooting](https://rancher.com/docs/rancher/v2.x/en/troubleshooting/kubernetes-components/controlplane/)
+
+```bash
+# Build a new lab Rancher cluster if needed (see Lab 12)
+# Log into a control plane node in your test cluster: from the web console click on the cluster then nodes, click the node control button on the right and download SSH keys
+ssh -i test-ec2/id_rsa ubuntu@52.12.73.131
+
+# Make sure all containers are up
+ubuntu@test-ec2:~$ sudo docker ps -a -f=name='kube-apiserver|kube-controller-manager|kube-scheduler'
+CONTAINER ID        IMAGE                                 COMMAND                  CREATED             STATUS              PORTS               NAMES
+f781fd5bcedb        rancher/hyperkube:v1.16.10-rancher2   "/opt/rke-tools/entr…"   8 minutes ago       Up 8 minutes                            kube-scheduler
+d2fd16368a41        rancher/hyperkube:v1.16.10-rancher2   "/opt/rke-tools/entr…"   8 minutes ago       Up 8 minutes                            kube-controller-manager
+b7afe9e26c2b        rancher/hyperkube:v1.16.10-rancher2   "/opt/rke-tools/entr…"   8 minutes ago       Up 8 minutes                            kube-apiserver
+
+# Then check their logs
+sudo docker logs kube-apiserver
+sudo docker logs kube-controller-manager
+sudo docker logs kube-scheduler
+```
