@@ -317,3 +317,7 @@ ip-10-0-101-238.us-west-2.compute.internal   Ready     controlplane,etcd,worker 
 # Build a new lab Rancher cluster on an older version if needed (see Lab 12)
 # From the cluster overview pane, select “Enable Monitoring to see live metrics” from the right corner of the screen
 ```
+
+## [Lab 23](https://github.com/ccliver/certified-rancher-operator/tree/lab-23) - Activate and Use Advanced Monitoring
+
+See [alert docs](https://rancher.com/docs/rancher/v2.x/en/cluster-admin/tools/alerts/) for information on setting up various types of alerts for a cluster.
