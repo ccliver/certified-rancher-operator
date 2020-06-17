@@ -310,3 +310,10 @@ INFO[0003] Saving config to /Users/carl/.rancher/cli2.json
 NAME                                         STATUS    ROLES                      AGE       VERSION
 ip-10-0-101-238.us-west-2.compute.internal   Ready     controlplane,etcd,worker   3m        v1.17.6
 ```
+
+## [Lab 22](https://github.com/ccliver/certified-rancher-operator/tree/lab-22) - Activate and Use Advanced Monitoring
+
+```bash
+# Build a new lab Rancher cluster on an older version if needed (see Lab 12)
+# From the cluster overview pane, select “Enable Monitoring to see live metrics” from the right corner of the screen
+```
