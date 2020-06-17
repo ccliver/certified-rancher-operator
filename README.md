@@ -346,3 +346,7 @@ Set resource limits
   * Navigate to a cluster project list
   * Click Edit on a project
   * Add Quotas under Resource Quotas
+
+## [Lab 27](https://github.com/ccliver/certified-rancher-operator/tree/lab-27) - Move a Namespace Between Projects
+
+A namespace and all of its workloads can be moved between projects. If there are no resource quotas navigate to Projects/Namespaces from the cluster overview screen, check the project, and click Move. If the origin project has resource quotas those will need to be removed in the project's edit page. If the destination project has resource quotas those will need to be removed as well.
