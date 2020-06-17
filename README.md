@@ -339,3 +339,10 @@ Creating a new user:
   * Navigate to a cluster project
   * Select Edit
   * Under Members -> Add Member -> Enter name and role and click Save
+
+## [Lab 26](https://github.com/ccliver/certified-rancher-operator/tree/lab-26) - Set and Test Resource Quota and Limits on Projects
+
+Set resource limits
+  * Navigate to a cluster project list
+  * Click Edit on a project
+  * Add Quotas under Resource Quotas
