@@ -321,3 +321,13 @@ ip-10-0-101-238.us-west-2.compute.internal   Ready     controlplane,etcd,worker 
 ## [Lab 23](https://github.com/ccliver/certified-rancher-operator/tree/lab-23) - Activate and Use Advanced Monitoring
 
 See [alert docs](https://rancher.com/docs/rancher/v2.x/en/cluster-admin/tools/alerts/) for information on setting up various types of alerts for a cluster.
+
+## [Lab 24](https://github.com/ccliver/certified-rancher-operator/tree/lab-24) - Create a New Project with Dedicated Namespaces
+
+Projects in Rancher allow you to group kubernetes namespaces and apply policy and configuration to them.
+To create a project:
+  * Navigate to a cluster in the UI
+  * Click Projects/Namespaces
+  * Add Project
+  * Name the project and define appropriate parameters
+  * Once created you'll have an Add Namespace button to add kubernetes namespaces to it
