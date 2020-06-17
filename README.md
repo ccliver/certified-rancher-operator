@@ -274,3 +274,39 @@ Follow guide [here](https://academy.rancher.com/assets/courseware/v1/5503818b9b8
 # Snapshot the downstream cluster (this can be done in the web console in the Global cluster view, click on the cluster edit button, then Snapshot Now
 # Edit the cluster, choose a newer version, and the Rancher will perform a rolling upgrade on one node at a time
 ```
+
+## [Lab 21](https://github.com/ccliver/certified-rancher-operator/tree/lab-21) - kubectl and the Rancher CLI
+
+```bash
+# Build a new lab Rancher cluster on an older version if needed (see Lab 12)
+```
+
+You can access a cluster with `kubectl` in a couple ways:
+  * Log into the UI, click on a cluster, click Launch kubectl to get an in-browser kubectl configured for the cluster.
+  * On the same screen click Kubeconfig file and copy that to `~/.kube/config ` or use `KUBECONFIG` to set it in your environment.
+
+Alternatively, you can use the [rancher cli](https://rancher.com/docs/rancher/v2.x/en/cli/) to manage all downstream clusters managed by Rancher
+```bash
+brew install rancher-cli
+# In the UI navigate to your avatar, click API & Keys, Add Key, give it a description, set it to expire in a day and "no scope" to work on all clusters
+export RANCHER_TOKEN="$ACCESS_KEY:$SECRET_KEY"
+rancher login --toke "$RANCHER_TOKEN" --name rancher-cert
+rancher login --token "$RANCHER_TOKEN" https://rancherlab.ddns.net/v3
+[carl@Carls-MacBook-Air-2:certified-rancher-operator (lab-21)]$ rancher kubectl get nodes
+NAME      STATUS    ROLES                      AGE       VERSION
+node1     Ready     controlplane,etcd,worker   15m       v1.17.6
+node2     Ready     controlplane,etcd,worker   15m       v1.17.6
+node3     Ready     controlplane,etcd,worker   15m       v1.17.6
+[carl@Carls-MacBook-Air-2:certified-rancher-operator (lab-21)]$ rancher context switch
+NUMBER    CLUSTER NAME   PROJECT ID        PROJECT NAME   PROJECT DESCRIPTION
+1         test           c-48d5j:p-66756   System         System project created for the cluster
+2         test           c-48d5j:p-pm6lb   Default        Default project created for the cluster
+3         local          local:p-9x8rp     Default        Default project created for the cluster
+4         local          local:p-bbd7x     System         System project created for the cluster
+Select a Project:2
+INFO[0003] Setting new context to project Default
+INFO[0003] Saving config to /Users/carl/.rancher/cli2.json
+[carl@Carls-MacBook-Air-2:certified-rancher-operator (lab-21)]$ rancher kubectl get nodes
+NAME                                         STATUS    ROLES                      AGE       VERSION
+ip-10-0-101-238.us-west-2.compute.internal   Ready     controlplane,etcd,worker   3m        v1.17.6
+```
