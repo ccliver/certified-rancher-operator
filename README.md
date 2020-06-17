@@ -331,3 +331,11 @@ To create a project:
   * Add Project
   * Name the project and define appropriate parameters
   * Once created you'll have an Add Namespace button to add kubernetes namespaces to it
+
+## [Lab 25](https://github.com/ccliver/certified-rancher-operator/tree/lab-25) - Create a Non-Privileged User
+
+Creating a new user:
+  * Navigate to the Global view then click on Security -> Users and create a user
+  * Navigate to a cluster project
+  * Select Edit
+  * Under Members -> Add Member -> Enter name and role and click Save
